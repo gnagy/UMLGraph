@@ -107,6 +107,7 @@ public class Options implements Cloneable, OptionProvider {
     double nodeSep;
     double rankSep;
     public String outputDirectory;
+
     /*
      * Numeric values are preferable to symbolic here.
      * Symbolic reportedly fail on MacOSX, and also are
@@ -135,6 +136,7 @@ public class Options implements Cloneable, OptionProvider {
     // TODO: consider making this standard behaviour
     boolean strictMatching;    
     String dotExecutable;
+    public String diagramFormat;
 
     Options() {
 	showQualified = false;
@@ -188,6 +190,7 @@ public class Options implements Cloneable, OptionProvider {
 	nodeSep = 0.25;
 	rankSep = 0.5;
     dotExecutable = "dot";
+    diagramFormat = "png";
     }
 
     public Object clone() {
@@ -274,6 +277,7 @@ public class Options implements Cloneable, OptionProvider {
            option.equals("-nodesep") ||
            option.equals("-ranksep") ||
            option.equals("-dotexecutable") ||
+           option.equals("-diagramformat") ||
            option.equals("-link"))
            return 2;
 	else if(option.equals("-contextPattern") ||
@@ -541,6 +545,8 @@ public class Options implements Cloneable, OptionProvider {
 	    rankSep = 0.5;
     } else if (opt[0].equals("-dotexecutable")) {
         dotExecutable = opt[1];
+    } else if (opt[0].equals("-diagramformat")) {
+        diagramFormat = opt[1];
 	} else
 	    ; // Do nothing, javadoc will handle the option or complain, if
                 // needed.

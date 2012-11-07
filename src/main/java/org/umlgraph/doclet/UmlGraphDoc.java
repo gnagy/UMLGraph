@@ -30,6 +30,7 @@ import com.sun.tools.doclets.standard.Standard;
  * @depend - - - WrappedRootDoc
  */
 public class UmlGraphDoc {
+	
     /**
      * Option check, forwards options to the standard doclet, if that one refuses them,
      * they are sent to UmlGraph
@@ -96,7 +97,7 @@ public class UmlGraphDoc {
 		packages.add(packageDoc.name());
     	    OptionProvider view = new PackageView(outputFolder, packageDoc, root, opt);
     	    UmlGraph.buildGraph(root, view, packageDoc);
-    	    runGraphviz(opt.dotExecutable, outputFolder, packageDoc.name(), packageDoc.name(), root);
+    	    runGraphviz(opt.dotExecutable, opt.diagramFormat, outputFolder, packageDoc.name(), packageDoc.name(), root);
     	    alterHtmlDocs(opt, outputFolder, packageDoc.name(), packageDoc.name(),
     		    "package-summary.html", Pattern.compile(".*</[Hh]2>.*"), root);
 	    }
@@ -123,21 +124,24 @@ public class UmlGraphDoc {
 	    else
 		view.setContextCenter(classDoc);
 	    UmlGraph.buildGraph(root, view, classDoc);
-	    runGraphviz(opt.dotExecutable, outputFolder, classDoc.containingPackage().name(), classDoc.name(), root);
+	    runGraphviz(opt.dotExecutable, opt.diagramFormat, outputFolder, classDoc.containingPackage().name(), classDoc.name(), root);
 	    alterHtmlDocs(opt, outputFolder, classDoc.containingPackage().name(), classDoc.name(),
 		    classDoc.name() + ".html", Pattern.compile(".*(Class|Interface|Enum) " + classDoc.name() + ".*") , root);
 	}
     }
 
     /**
-     * Runs Graphviz dot building both a diagram (in png format) and a client side map for it.
+     * Runs Graphviz dot building both a diagram and a client side map for it.
      */
-    private static void runGraphviz(String dotExecutable, String outputFolder, String packageName, String name, RootDoc root) {
+    private static void runGraphviz(String dotExecutable, String diagramFormat, String outputFolder, String packageName, String name, RootDoc root) {
     if (dotExecutable == null) {
       dotExecutable = "dot";
     }
+    if(diagramFormat == null) {
+    	diagramFormat = "png";
+    }
 	File dotFile = new File(outputFolder, packageName.replace(".", "/") + "/" + name + ".dot");
-	File pngFile = new File(outputFolder, packageName.replace(".", "/") + "/" + name + ".png");
+	File diagramFile = new File(outputFolder, packageName.replace(".", "/") + "/" + name + "." + diagramFormat);
 	File mapFile = new File(outputFolder, packageName.replace(".", "/") + "/" + name + ".map");
 
 	try {
@@ -146,9 +150,9 @@ public class UmlGraphDoc {
 		"-Tcmapx",
 		"-o",
 		mapFile.getAbsolutePath(),
-		"-Tpng",
+		"-T" + diagramFormat,
 		"-o",
-		pngFile.getAbsolutePath(),
+		diagramFile.getAbsolutePath(),
 		dotFile.getAbsolutePath()
 	    });
 	    BufferedReader reader = new BufferedReader(new InputStreamReader(p.getErrorStream()));
@@ -167,7 +171,7 @@ public class UmlGraphDoc {
     //Format string for the uml image div tag.
     private static final String UML_DIV_TAG = 
 	"<div align=\"center\">" +
-	    "<img src=\"%1$s.png\" alt=\"Package class diagram package %1$s\" usemap=\"#G\" border=0/>" +
+	    "<img src=\"%1$s.svg\" alt=\"Package class diagram package %1$s\" usemap=\"#G\" border=0/>" +
 	"</div>";
     
     //Format string for the java script tag.
