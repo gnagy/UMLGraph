@@ -478,7 +478,7 @@ class ClassGraph {
 	    w.print("\t" + ci.name + " [label=");
 
 	    boolean showMembers =
-		(opt.showAttributes && c.fields().length > 0) ||
+		(opt.showAttributes && c.fields(!opt.forceFields).length > 0) ||
 		(c.isEnum() && opt.showEnumConstants && c.enumConstants().length > 0) ||
 		(opt.showOperations && c.methods().length > 0) ||
 		(opt.showConstructors && c.constructors().length > 0);
@@ -533,12 +533,12 @@ class ClassGraph {
 	    if (showMembers) {
 		if (opt.showAttributes) {
 		    innerTableStart();
-		    FieldDoc[] fields = c.fields();
+		    FieldDoc[] fields = c.fields(!opt.forceFields);
 		    // if there are no fields, print an empty line to generate proper HTML
 		    if (fields.length == 0)
 			tableLine(Align.LEFT, "");
 		    else
-			attributes(opt, c.fields());
+			attributes(opt, fields);
 		    innerTableEnd();
 		} else if(!c.isEnum() && (opt.showConstructors || opt.showOperations)) {
 		    // show an emtpy box if we don't show attributes but
@@ -824,7 +824,7 @@ class ClassGraph {
 	if (hidden(c))
 	    return;
 
-	for (FieldDoc field : c.fields(false)) {
+	for (FieldDoc field : c.fields(!opt.forceFields)) {
 	    if(hidden(field))
 		continue;
 
@@ -881,7 +881,7 @@ class ClassGraph {
 	}
 	// and the field types
 	if (!opt.inferRelationships) {
-	    for (FieldDoc field : filterByVisibility(c.fields(false), opt.inferDependencyVisibility)) {
+	    for (FieldDoc field : filterByVisibility(c.fields(!opt.forceFields), opt.inferDependencyVisibility)) {
 		types.add(field.type());
 	    }
 	}

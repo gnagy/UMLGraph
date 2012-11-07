@@ -70,6 +70,7 @@ public class Options implements Cloneable, OptionProvider {
     Vector<Pattern> hidePatterns;
     boolean showQualified;
     boolean showAttributes;
+    boolean forceFields;
     boolean showEnumerations;
     boolean showEnumConstants;
     boolean showOperations;
@@ -141,6 +142,7 @@ public class Options implements Cloneable, OptionProvider {
     Options() {
 	showQualified = false;
 	showAttributes = false;
+	forceFields = false;
 	showEnumConstants = false;
 	showOperations = false;
 	showVisibility = false;
@@ -227,6 +229,7 @@ public class Options implements Cloneable, OptionProvider {
         if(option.equals("-qualify") ||
            option.equals("-horizontal") ||
            option.equals("-attributes") ||
+           option.equals("-forcefields") ||
            option.equals("-operations") ||
            option.equals("-constructors") ||
            option.equals("-visibility") ||
@@ -306,6 +309,10 @@ public class Options implements Cloneable, OptionProvider {
 	    showAttributes = true;
 	} else if (opt[0].equals("-!attributes")) {
 	    showAttributes = false;
+	} else if(opt[0].equals("-forcefields")) {
+	    forceFields = true;
+	} else if (opt[0].equals("-!forcefields")) {
+	    forceFields = false;
 	} else if(opt[0].equals("-enumconstants")) {
 	    showEnumConstants = true;
 	} else if (opt[0].equals("-!enumconstants")) {
